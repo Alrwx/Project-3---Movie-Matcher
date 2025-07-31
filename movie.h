@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #include <vector>
 
@@ -5,14 +6,19 @@ class Movie {
     private:
         std::string name;
         int id;
-        int rating;
+        double rating = 0.0;
         std::vector<std::string> genres;
+
+        double rating_sum = 0.0;
+        int rating_count = 0;
+
     public:
-        Movie(std::string n, int i) : name(n), id(i) {}
-        void addGenre(std::string genre) {
-            genres.push_back(genre);
-        }
-        void addRating(int rate) {
-            rating = rate;
-        }
+        Movie(std::string n, int i);
+        void addGenre(std::string genre);
+        void addRating(double rate);
+
+        double getRating() const;
+        int getId() const;
+        std::vector<std::string> getGenres();
+        std::string getName() const;
 };
