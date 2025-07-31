@@ -18,11 +18,10 @@ int main() {
     std::string ratingCSV = "test/ratingtest.csv";
 
     parseMovies(movieCSV, movieMap);
-    // parseRatings(ratingCSV, movieMap);
+    parseRatings(ratingCSV, movieMap);
 
     for (const auto& pair : movieMap) {
         const Movie& movie = pair.second;
-        std::cout << "ID: " << movie.getId() << ", Title: " << movie.getName() << std::endl;
-                //   << ", Average Rating: " << movie.getRating() << std::endl;
+        std::cout << "ID: " << movie.getId() << ", Title: " << movie.getName() << ", Average Rating: " << movie.getRating() << std::endl;
     }
 }
