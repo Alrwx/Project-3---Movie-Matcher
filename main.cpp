@@ -14,14 +14,14 @@ int main() {
 
     //testing purposes
     std::unordered_map<int, Movie> movieMap;
-    std::string movieCSV = "test/movietest.csv";
-    std::string ratingCSV = "test/ratingtest.csv";
+    std::unordered_map<std::string, Movie*> movieNames;
+    // std::string movieCSV = "test/movietest.csv";
+    // std::string ratingCSV = "test/ratingtest.csv";
 
-    parseMovies(movieCSV, movieMap);
-    parseRatings(ratingCSV, movieMap);
+    parseData(movieMap, movieNames);
 
-    for (const auto& pair : movieMap) {
-        const Movie& movie = pair.second;
-        std::cout << "ID: " << movie.getId() << ", Title: " << movie.getName() << ", Average Rating: " << movie.getRating() << std::endl;
+    for (const auto& pair : movieNames) {
+        const Movie* movie = pair.second;
+        std::cout << "ID: " << movie->getId() << ", Title: " << pair.first << ", Average Rating: " << movie->getRating() << std::endl;
     }
 }
