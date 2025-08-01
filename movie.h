@@ -19,6 +19,6 @@ class Movie {
 
         double getRating() const;
         int getId() const;
-        std::vector<std::string> getGenres();
+        std::vector<std::string> getGenres() const;
         std::string getName() const;
 };

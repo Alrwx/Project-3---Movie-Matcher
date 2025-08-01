@@ -5,7 +5,8 @@
 #include <sstream>
 #include <iostream>
 #include "parsing.h"
-#include <set>
+#include <unordered_set>
+#include <algorithm>
 
 void parseMovies(const std::string& filename, std::unordered_map<int,Movie>& movieMap, std::unordered_map<std::string, Movie*>& movieNames) {
     std::ifstream file(filename);
@@ -72,16 +73,57 @@ void parseData(std::unordered_map<int,Movie>& movieMap, std::unordered_map<std::
     parseRatings(ratings, movieMap);
 }
 
-void approach1(std::string fmovie, std::string smovie, std::unordered_map<int,Movie>& movieMap, std::unordered_map<std::string, Movie*>& movieNames) {
-    Movie movie1 = *movieNames.at(fmovie);
-    Movie movie2 = *movieNames.at(smovie);
+std::vector<std::pair<Movie*, int>> approach1(std::string fmovie, std::string smovie, std::unordered_map<int,Movie>& movieMap, std::unordered_map<std::string, Movie*>& movieNames) {
+    std::vector<std::pair<Movie*, int>> result; 
+
+
+    Movie& movie1 = *movieNames.at(fmovie);
+    Movie& movie2 = *movieNames.at(smovie);
 
     std::vector<std::string> genres1 = movie1.getGenres();
+    int id1 = movie1.getId();
     std::vector<std::string> genres2 = movie2.getGenres();
+    int id2 = movie2.getId();
 
     //find common genres
-    std::set<std::string> genres;
+    std::vector<std::string> common;
+
+    for (auto genre : genres1) {
+        if (std::count(genres2.begin(),genres2.end(),genre) != 0) {
+            common.push_back(genre);
+        }
+    }
 
 
-    return;
+
+    //looking at the common genres - delete 
+    for (auto ele : common) {
+        std::cout << ele << " | " << std::endl;
+    }
+
+
+
+    for (auto const& pair : movieMap) {
+        int id = pair.first;
+        const Movie& movie = pair.second;
+
+        //makes sure the base movies aren't being looked at
+        if (id == id1 || id == id2) {
+            continue;
+        }
+
+        std::vector<std::string> genres = movie.getGenres();
+        int count = 0;
+        //count how many genres are in the similar section
+        for (auto gen : genres) {
+            if (std::count(common.begin(),common.end(), gen) != 0) {
+                count++;
+            }
+        }
+        if (count > 0) {
+            result.emplace_back({&movie, count});
+        }
+
+    }
+    return result;
 }
