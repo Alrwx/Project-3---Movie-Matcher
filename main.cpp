@@ -1,6 +1,6 @@
 #include "movie.h"
 #include "parsing.h"
-#include "testing.h"
+#include "testingFunction.h"
 #include <iostream>
 #include <unordered_map>
 #include <string>
@@ -18,6 +18,8 @@ int main() {
     std::unordered_map<std::string, Movie*> movieNames;
 
     parseData(movieMap, movieNames);
+
+    printMovieNames(movieNames);
 
     //testing purposes
 
