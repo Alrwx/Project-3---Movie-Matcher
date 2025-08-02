@@ -103,9 +103,9 @@ std::vector<std::pair<Movie*, int>> approach1(std::string fmovie, std::string sm
 
 
 
-    for (auto const& pair : movieMap) {
+    for (auto& pair : movieMap) {
         int id = pair.first;
-        const Movie& movie = pair.second;
+        Movie& movie = pair.second;
 
         //makes sure the base movies aren't being looked at
         if (id == id1 || id == id2) {
@@ -121,7 +121,7 @@ std::vector<std::pair<Movie*, int>> approach1(std::string fmovie, std::string sm
             }
         }
         if (count > 0) {
-            result.emplace_back({&movie, count});
+            result.emplace_back(&movie, count);
         }
 
     }

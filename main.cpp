@@ -6,7 +6,9 @@
 
 
 void printG(std::vector<Movie*>& g, int c) {
-    std::cout << "" << std::endl;
+    if (c == 0) {
+        return;
+    }
     if (g.empty()) {
         std::cout << "No movies with " << c << " genres in common." << std::endl;
         return;
@@ -14,10 +16,11 @@ void printG(std::vector<Movie*>& g, int c) {
     std::cout << "Movies with " << c << " genres in common" << std::endl;
     for (const auto mov : g) {
         Movie* movie = mov;
-        std::cout << "Name: " << movie->getName() << " | Rating: " << movie->getRating() << " | Genres: " << std::endl;
+        std::cout << "Name: " << movie->getName() << " | Rating: " << movie->getRating() << " | Genres: ";
         for (auto gen : movie->getGenres()) {
-            std::cout << "\t" << gen << " ,";
+            std::cout << gen << " ,";
         }
+        std::cout << std::endl;
     }
 }
 
@@ -48,6 +51,7 @@ int main() {
     // for (auto ele : result) {
     //     std::cout << ele << " | " << std::endl;
     // } -- this works fine!
+    // std::vector<std::vector<Movie*>> g;
     std::vector<Movie*> g1, g2, g3;
 
     for (const auto& pair : result) {

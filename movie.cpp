@@ -26,7 +26,7 @@ std::string Movie::getName() const {
     return name;
 }
 
-std::vector<std::string>& Movie::getGenres() const {
+const std::vector<std::string>& Movie::getGenres() const {
     return genres;
 }
 
