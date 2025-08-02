@@ -1,14 +1,14 @@
+#include "testingFunction.h"
 #include <iostream>
 #include <unordered_map>
 #include <string>
 #include <vector>
 #include "movie.h"
-#include "testing.h"
 
 //test file used to see if the parsing works correctly
 
 //prints out the movie names
-void printMovieNames(std::unordered_map<std::string, Movie*> movieNames) {
+void printMovieNames(std::unordered_map<std::string, Movie*>& movieNames) {
     for (const auto& pair : movieNames) {
             const Movie* movie = pair.second;
             std::cout << "ID: " << movie->getId() << ", Title: " << pair.first << ", Average Rating: " << movie->getRating() << std::endl;
