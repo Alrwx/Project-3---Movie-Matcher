@@ -24,6 +24,6 @@ class CustomHashMap {
     public:
         CustomHashMap(int startSize = 40, float maximumLoad = 0.75f);
         void insert(const std::string& key, Storage* store);
-        bool has(const std::string& key) const;\
+        bool has(const std::string& key) const;
         Storage* get(const std::string& key) const;
 };
