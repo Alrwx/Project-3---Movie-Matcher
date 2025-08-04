@@ -102,6 +102,28 @@ void parseData(unordered_map<int,Movie>& movieMap, unordered_map<string, Movie*>
     parseMovies(movies, movieMap, movieNames);
     parseRatings(ratings, movieMap);
 }
+void printResults(const std::vector<Storage>& result) {
+    bool hasMovies = false;
+    for (size_t i = 1; i < result.size(); ++i) {
+        const std::vector<Movie*>& movies = result[i].getMovies();
+        if (!movies.empty()) {
+            hasMovies = true;
+            std::cout << "Movies with " << i << " common genres:\n";
+            int count = 0;
+            for (const auto& movie : movies) {
+                if (count == 10) {
+                    break;
+                }
+                std::cout << "- ID: " << movie->getId() << ", Title: " << movie->getName() << ", Rating: " << movie->getRating() << "\n";
+                count++;
+            }
+            std::cout << std::endl;
+        }
+    }
+    if (!hasMovies) {
+        std::cout << "No movies in common." << std::endl;
+    }
+}
 
 // Alvin
 std::vector<Storage> approach1(const PreparedInput& input, std::unordered_map<int,Movie>& movieMap) {

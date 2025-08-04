@@ -83,16 +83,10 @@ int main() {
             }
 
             if (algoChoice == 1){
-                for (int i = 1; i <= 5; ++i){
-                    const Storage& bucket = storageResult[i];
-                     printResults(storageResult);
-                }
+                printResults(storageResult);
             }
             else if (algoChoice == 2) {
-                std::cout << "\nTop Recommended Movies (Heap-Based):\n";
-                for (Movie* m : topMatches) {
-                    std::cout << "- " << m->getName() << " | Rating: " << m->getRating() << "\n";
-                }
+                printResults(storageResult);
             }
         }
         else if (option == 5) {
