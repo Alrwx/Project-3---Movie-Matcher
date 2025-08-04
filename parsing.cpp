@@ -45,12 +45,10 @@ void parseMovies(const std::string& filename, std::unordered_map<int,Movie>& mov
             movie.addGenre(genre);
         }
 
-        auto [it, inserted] = movieMap.emplace(movID, movie);
-        if (!inserted) {
-            std::cerr << "Duplicate movie ID found: " << movID << std::endl;
-        }
-        //add to map
-        movieNames.emplace(nameStr, &it->second);
+        movieMap.emplace(movID, movie);
+        //another map used just for storing the names, super helpful for the approaches for O(1) lookup
+        //cannot do  &movie, since it is a local variable in this function
+        movieNames.emplace(nameStr, &movieMap.at(movID));
     }
 }
 
@@ -109,7 +107,6 @@ std::vector<Storage> approach1(const PreparedInput& input, std::unordered_map<in
     int id1 = input.getId1();
     int id2 = input.getId2();
 
-    std::priority_queue<std::pair<int, Movie*>, std::vector<std::pair<int, Movie*>>, CompareCount> pq;
     for (auto& pair : movieMap) {
         int id = pair.first;
         Movie& movie = pair.second;
@@ -153,6 +150,29 @@ std::vector<Storage> approach1(const PreparedInput& input, std::unordered_map<in
         }
     }
     return result;
+}
+
+void printResults(const std::vector<Storage>& result) {
+    bool hasMovies = false;
+    for (size_t i = 1; i < result.size(); ++i) {
+        const std::vector<Movie*>& movies = result[i].getMovies();
+        if (!movies.empty()) {
+            hasMovies = true;
+            std::cout << "Movies with " << i << " common genres:\n";
+            int count = 0;
+            for (const auto& movie : movies) {
+                if (count == 10) {
+                    break;
+                }
+                std::cout << "- ID: " << movie->getId() << ", Title: " << movie->getName() << ", Rating: " << movie->getRating() << "\n";
+                count++;
+            }
+            std::cout << std::endl;
+        }
+    }
+    if (!hasMovies) {
+        std::cout << "No movies in common." << std::endl;
+    }
 }
 
 

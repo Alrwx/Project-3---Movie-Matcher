@@ -78,7 +78,9 @@ std::vector<Movie*> approach2(
         }
     }
 
-    for (auto& [id, movie] : movieMap){
+    for (auto& pair : movieMap){
+        auto id = pair.first;
+        auto movie = pair.second;
         if (id == movie1.getId() || id == movie2.getId()) continue;
 
         int genreMatch = 0;

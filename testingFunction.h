@@ -7,7 +7,7 @@
 
 void printMovieNames(std::unordered_map<std::string, Movie*>& movieNames);
 void printG(const std::vector<Movie*>& g, int c);
-void printResults(std::vector<Storage>& store);
+
 void printMov(std::vector<Storage>& store);
 std::vector<Movie*> approach2(const std::string& fmovie,
     const std::string& smovie,

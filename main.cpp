@@ -6,6 +6,7 @@
 #include <string>
 #include "prepareInput.h"
 #include "Storage.h"
+#include <limits>
 
 int main() {
     std::unordered_map<int, Movie> movieMap;
@@ -37,7 +38,7 @@ int main() {
         std::cin.ignore(); 
 
         if (option == 1) {
-            std::cout << "Enter First Movie Title (e.g. The Matrix (1999)): ";
+            std::cout << "Enter First Movie Title (e.g. Toy Story (1995)): ";
             std::getline(std::cin, mov1);
         }
         else if (option == 2) {
@@ -80,10 +81,8 @@ int main() {
             }
 
             if (algoChoice == 1){
-                for (int i = 1; i <= 5; ++i){
-                    const Storage& bucket = storageResult[i];
-                    printG(bucket.getMovies(), i);
-                }
+                std::cout << std::endl;
+                printResults(storageResult);
             }
             else if (algoChoice == 2) {
                 std::cout << "\nTop Recommended Movies (Heap-Based):\n";

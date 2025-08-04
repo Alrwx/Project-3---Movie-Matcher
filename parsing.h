@@ -26,4 +26,4 @@ std::vector<std::pair<Movie*, int>> queueApproach(std::string fmovie, std::strin
 
 void printResults(const std::vector<Storage>& result);
 
-void printG(const std::vector<Movie*>& g, int c);
+// void printG(const std::vector<Movie*>& g, int c);
