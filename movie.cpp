@@ -87,6 +87,6 @@ bool MoviePQ::empty() const {
     return data.empty();
 }
 
-size_t MoviePQ::size() const {
+int MoviePQ::size() const {
     return data.size();
 }

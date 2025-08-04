@@ -86,7 +86,7 @@ void parseRatings(const std::string& filename, std::unordered_map<int,Movie>& mo
 
 void printResults(const std::vector<Storage>& result) {
     bool hasMovies = false;
-    for (size_t i = 1; i < result.size(); ++i) {
+    for (int i = 1; i < result.size(); i++) {
         const std::vector<Movie*>& movies = result[i].getMovies();
         if (!movies.empty()) {
             hasMovies = true;
@@ -107,9 +107,9 @@ void printResults(const std::vector<Storage>& result) {
     }
 }
 
-// Alvin
+// Approach 1 through a custom hash map
 std::vector<Storage> approach1(const PreparedInput& input, std::unordered_map<int,Movie>& movieMap) {
-    //initialie vector with 6 empty storage slots to allow for indexing with []
+    //initialize vector with 6 empty storage slots to allow for indexing with []
     std::vector<Storage> result(6);
     CustomHashMap map(6, 0.75f);
 

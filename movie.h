@@ -24,18 +24,19 @@ class Movie {
 };
 
 class MoviePQ {
+    private:
     std::vector<std::pair<Movie*, int>> data;
-
+   
     void heapifyUp(int i);
     void heapifyDown(int i);
     bool compare(const std::pair<Movie*, int>& p1, const std::pair<Movie*, int>& p2) {
         return p1.first->getRating() < p2.first->getRating();
     }
+
     public:
     void push(std::pair<Movie*, int> item);
     void pop();
     std::pair<Movie*, int> top();
     bool empty() const;
-    size_t size() const;
-
+    int size() const;
 };
