@@ -6,6 +6,7 @@
 #include <string>
 #include "prepareInput.h"
 #include "Storage.h"
+#include <limits>
 
 int main() {
     std::unordered_map<int, Movie> movieMap;
@@ -65,7 +66,9 @@ int main() {
                 std::cout << "Data computed using Approach 1.\n";
             }
             else if (algoChoice == 2) {
-                topMatches = approach2(mov1, mov2, movieMap, movieNames);
+                PreparedInput input;
+                input = input.prepare(mov1, mov2, movieNames);
+                storageResult = queueApproach(input, movieMap);
                 dataComputed = true;
                 std::cout << "Data computed using Approach 2.\n";
             }
@@ -82,7 +85,7 @@ int main() {
             if (algoChoice == 1){
                 for (int i = 1; i <= 5; ++i){
                     const Storage& bucket = storageResult[i];
-                    printG(bucket.getMovies(), i);
+                     printResults(storageResult);
                 }
             }
             else if (algoChoice == 2) {

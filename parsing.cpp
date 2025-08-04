@@ -157,7 +157,7 @@ std::vector<Storage> approach1(const PreparedInput& input, std::unordered_map<in
     }
     return result;
 }
-
+/*
 struct CompareCount {
     bool operator()(const pair<int, Movie*>& m1, const pair<int, Movie*>& m2) {
         if (m1.first != m2.first) {
@@ -166,9 +166,7 @@ struct CompareCount {
         return m1.second->getRating() < m2.second->getRating();
     }
 
-    Movie& movie1 = *movieNames.at(fmovie);
-    Movie& movie2 = *movieNames.at(smovie);
-
+*/
 //We have to re-implement this, we have to make a priority queue.
 // Queue Approach (preparedInput finds the strings and the ID's)
 vector<Storage> queueApproach(const PreparedInput input, unordered_map<int, Movie>& movieMap) {
