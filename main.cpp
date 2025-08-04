@@ -1,6 +1,5 @@
 #include "movie.h"
 #include "parsing.h"
-#include "testingFunction.h"
 #include <iostream>
 #include <unordered_map>
 #include <string>
@@ -83,9 +82,11 @@ int main() {
             }
 
             if (algoChoice == 1){
+                std::cout << std::endl;
                 printResults(storageResult);
             }
             else if (algoChoice == 2) {
+                std::cout << std::endl;
                 printResults(storageResult);
             }
         }

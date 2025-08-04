@@ -23,7 +23,6 @@ void parseData(std::unordered_map<int,Movie>& movieMap, std::unordered_map<std::
 std::vector<Storage> approach1(const PreparedInput& input, std::unordered_map<int,Movie>& movieMap);
 
 //approach 2: Custom Priority Queue
-using namespace std;
-vector<Storage> queueApproach(const PreparedInput input, unordered_map<int, Movie>& movieMap);
+std::vector<Storage> queueApproach(const PreparedInput input, std::unordered_map<int, Movie>& movieMap);
 
 void printResults(const std::vector<Storage>& result);

@@ -5,26 +5,20 @@
 #include <sstream>
 #include <iostream>
 #include "parsing.h"
-#include <algorithm>
 #include "Storage.h"
 #include "prepareInput.h"
 #include "CustomMap.h"
-#include <unordered_set>
-#include <algorithm>
-#include <queue>
 #include <vector>
 
-using namespace std;
 
-struct CompareCount {
-    bool operator()(const std::pair<int, Movie*>& m1, const std::pair<int, Movie*>& m2) {
-        if (m1.first != m2.first) {
-            return m1.first < m2.first;
-        }
-        return m1.second->getRating() < m2.second->getRating();
-    }
-};
 
+//combines the two parsing functions
+void parseData(std::unordered_map<int,Movie>& movieMap, std::unordered_map<std::string, Movie*>& movieNames) {
+    std::string movies = "files/movies.csv";
+    std::string ratings = "files/csvratings.csv";
+    parseMovies(movies, movieMap, movieNames);
+    parseRatings(ratings, movieMap);
+}
 void parseMovies(const std::string& filename, std::unordered_map<int,Movie>& movieMap, std::unordered_map<std::string, Movie*>& movieNames) {
     std::ifstream file(filename);
     std::string line;
@@ -49,18 +43,16 @@ void parseMovies(const std::string& filename, std::unordered_map<int,Movie>& mov
             movie.addGenre(genre);
         }
 
-        auto [it, inserted] = movieMap.emplace(movID, movie);
-        if (!inserted) {
-            std::cerr << "Duplicate movie ID found: " << movID << std::endl;
-        }
-        //add to map
-        movieNames.emplace(nameStr, &it->second);
+        movieMap.emplace(movID, movie);
+        //another map used just for storing the names, super helpful for the approaches for O(1) lookup
+        //cannot do  &movie, since it is a local variable in this function
+        movieNames.emplace(nameStr, &movieMap.at(movID));
     }
 }
 
-void parseRatings(const string& filename, unordered_map<int,Movie>& movieMap) {
-    ifstream file(filename);
-    string line;
+void parseRatings(const std::string& filename, std::unordered_map<int,Movie>& movieMap) {
+    std::ifstream file(filename);
+    std::string line;
 
     std::getline(file, line);
 
@@ -92,16 +84,6 @@ void parseRatings(const string& filename, unordered_map<int,Movie>& movieMap) {
     }
 }
 
-
-
-
-//combines the two parsing functions
-void parseData(unordered_map<int,Movie>& movieMap, unordered_map<string, Movie*>& movieNames) {
-    string movies = "files/movies.csv";
-    string ratings = "files/csvratings.csv";
-    parseMovies(movies, movieMap, movieNames);
-    parseRatings(ratings, movieMap);
-}
 void printResults(const std::vector<Storage>& result) {
     bool hasMovies = false;
     for (size_t i = 1; i < result.size(); ++i) {
@@ -134,7 +116,6 @@ std::vector<Storage> approach1(const PreparedInput& input, std::unordered_map<in
     int id1 = input.getId1();
     int id2 = input.getId2();
 
-    std::priority_queue<std::pair<int, Movie*>, std::vector<std::pair<int, Movie*>>, CompareCount> pq;
     for (auto& pair : movieMap) {
         int id = pair.first;
         Movie& movie = pair.second;
@@ -179,27 +160,17 @@ std::vector<Storage> approach1(const PreparedInput& input, std::unordered_map<in
     }
     return result;
 }
-/*
-struct CompareCount {
-    bool operator()(const pair<int, Movie*>& m1, const pair<int, Movie*>& m2) {
-        if (m1.first != m2.first) {
-            return m1.first < m2.first;
-        }
-        return m1.second->getRating() < m2.second->getRating();
-    }
 
-*/
-//We have to re-implement this, we have to make a priority queue.
+
 // Queue Approach (preparedInput finds the strings and the ID's)
-vector<Storage> queueApproach(const PreparedInput input, unordered_map<int, Movie>& movieMap) {
+std::vector<Storage> queueApproach(const PreparedInput input, std::unordered_map<int, Movie>& movieMap) {
     int id1 = input.getId1();
     int id2 = input.getId2();
-    const vector<string>& commonGenres = input.getCommon();
+    const std::vector<std::string>& commonGenres = input.getCommon();
 
     const int MAX_COUNT = 5;
-    vector<Storage> result(6);
+    std::vector<Storage> result(6);
     MoviePQ pq;
-    //priority_queue<pair<int, Movie*>,vector<pair<int, Movie*>>, CompareCount> pq;
 
     for (auto& pair : movieMap) {
         int id = pair.first;
@@ -207,17 +178,20 @@ vector<Storage> queueApproach(const PreparedInput input, unordered_map<int, Movi
 
         if (id == id1 || id == id2 || movie.getRating() == 0) {continue;}
 
-        vector<string> genres = movie.getGenres();
+        std::vector<std::string> genres = movie.getGenres();
 
         int matchCount = 0;
 
-        for (const auto& gen : genres) {
-            if (count(commonGenres.begin(),commonGenres.end(), gen)) {
-                matchCount++;
+        for (auto genre : genres) {
+            for (auto selected : commonGenres) {
+                if (genre == selected) {
+                    matchCount++;
+                    break; // stops double counting
+                }
             }
         }
+
         if (matchCount > 0 ) {
-            //int ratingInt = static_cast<int>(movie.getRating() * 100);
             pq.push({&movie, matchCount} );
         }
     }
@@ -235,14 +209,6 @@ vector<Storage> queueApproach(const PreparedInput input, unordered_map<int, Movi
             result[count].addMovie(movie);
             result[count].setCount(count);
         }
-
-        //Movie* movie = topPair.second;
-        /*
-        if (count > 0) {
-            result[count].addMovie(movie);
-        }
-    }
-    */
     }
     for (int i = 1; i <= MAX_COUNT; i++) {
         result[i].pqSortMovies();

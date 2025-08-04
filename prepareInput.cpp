@@ -5,8 +5,6 @@
 #include "movie.h"
 #include <unordered_set>
 
-using namespace std;
-
 //not part of approach, apart of setup
 PreparedInput PreparedInput::prepare(const std::string& fmovie, const std::string& smovie, const std::unordered_map<std::string, Movie*>& movieNames) {
     PreparedInput inputs;
@@ -16,19 +14,19 @@ PreparedInput PreparedInput::prepare(const std::string& fmovie, const std::strin
     const auto it2 = movieNames.find(smovie);
 
     if (it1 == movieNames.end()) {
-        cout << "Error: First movie not found!" << endl;
+        std::cout << "Error: First movie not found!" << std::endl;
         return inputs;
     }
     if (it2 == movieNames.end()) {
-        cout << "Error: Second movie not found!" << endl;
+        std::cout << "Error: Second movie not found!" << std::endl;
         return inputs;
     }
 
     Movie* movie1 = it1->second;
     Movie* movie2 = it2->second;
   
-    std::vector<string> genres1 = movie1->getGenres(); 
-    std::vector<string> genres2 = movie2->getGenres();
+    std::vector<std::string> genres1 = movie1->getGenres(); 
+    std::vector<std::string> genres2 = movie2->getGenres();
 
     std::unordered_set<std::string> genres(genres1.begin(), genres1.end());
     std::vector<std::string> common;

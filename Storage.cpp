@@ -1,7 +1,7 @@
 #include "Storage.h"
 #include <algorithm>
+#include <vector>
 #include <ios>
-#include <bits/ios_base.h>
 
 Storage::Storage() : count(0) {}
 
@@ -40,11 +40,11 @@ void Storage::sortMovies() {
     }
 }
 
-void Storage::mergeMovies(vector<Movie*>& movies, int left, int mid, int right) {
+void Storage::mergeMovies(std::vector<Movie*>& movies, int left, int mid, int right) {
     int m1 = mid - left + 1;
     int m2 = right - mid;
 
-    vector<Movie*> L(m1), R(m2);
+    std::vector<Movie*> L(m1), R(m2);
 
     for (int i = 0; i < m1; ++i) {
         L[i] = movies[left+i];
@@ -69,7 +69,7 @@ void Storage::mergeMovies(vector<Movie*>& movies, int left, int mid, int right) 
     }
 }
 
-void Storage::mergeSortMovies(vector<Movie*>& movies, int left, int right) {
+void Storage::mergeSortMovies(std::vector<Movie*>& movies, int left, int right) {
     if (left < right) {
         int mid = left + (right - left) / 2;
         mergeSortMovies(movies, left, mid);

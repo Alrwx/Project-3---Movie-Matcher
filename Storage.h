@@ -17,7 +17,7 @@ class Storage{
 
         void sortMovies();
 
-        void mergeMovies(vector<Movie*>& movies, int left, int mid, int right);
-        void mergeSortMovies(vector<Movie*>& movies, int left, int right);
+        void mergeMovies(std::vector<Movie*>& movies, int left, int mid, int right);
+        void mergeSortMovies(std::vector<Movie*>& movies, int left, int right);
         void pqSortMovies();
 };

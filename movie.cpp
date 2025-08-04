@@ -1,6 +1,5 @@
 #include "movie.h"
 
-using namespace std;
 //movie class functions
 
 Movie::Movie(std::string n, int i) : name(n), id(i) {}
@@ -30,7 +29,7 @@ const std::vector<std::string>& Movie::getGenres() const {
     return genres;
 }
 
-bool compare(const pair<Movie*, int >& p1, const pair< Movie*, int>& p2) {
+bool compare(const std::pair<Movie*, int >& p1, const std::pair< Movie*, int>& p2) {
     return p1.second < p2.second;
 }
 
@@ -67,7 +66,7 @@ void MoviePQ::heapifyDown(int i) {
     }
 }
 
-void MoviePQ::push(pair<Movie*, int> item) {
+void MoviePQ::push(std::pair<Movie*, int> item) {
     data.push_back(item);
     heapifyUp(data.size() - 1);
 }
@@ -77,7 +76,7 @@ void MoviePQ::pop() {
     data.pop_back();
     heapifyDown(0);
 }
-pair<Movie*, int> MoviePQ::top() {
+std::pair<Movie*, int> MoviePQ::top() {
     if (!data.empty()) {
         return data[0];
     }else {
