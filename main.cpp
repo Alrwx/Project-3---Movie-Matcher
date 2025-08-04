@@ -4,6 +4,8 @@
 #include <iostream>
 #include <unordered_map>
 #include <string>
+#include "prepareInput.h"
+#include "Storage.h"
 
 int main() {
     //basic structure/interface of the terminal:
@@ -19,34 +21,29 @@ int main() {
 
     parseData(movieMap, movieNames);
 
-    printMovieNames(movieNames);
+    // printMovieNames(movieNames);
 
     //testing purposes
 
-    std::string mov1 = "The Matrix";
-    std::string mov2 = "Inception";
-    std::vector<std::pair<Movie*, int>> result = approach1(mov1, mov2, movieMap, movieNames);
+    std::string mov1 = "Nixon (1995)";
+    std::string mov2 = "Casino (1995)";
+
+    PreparedInput prep;
+    prep = prep.prepare(mov1, mov2, movieNames);
+
+    // std::cout << "Common genres found: ";
+    // for (const auto& genre : prep.getCommon()) std::cout << genre << " ";
+    // std::cout << std::endl;
+
+    // std::cout << mov1 << " : " << mov2 << std::endl;
+
+    std::vector<Storage> result = approach1(prep, movieMap);
+
+
+    printResults(result);
 
     // std::vector<std::vector<Movie*>> g;
-    std::vector<Movie*> g1, g2, g3;
-    std::unordered_map<int, std::vector<Movie*>> g;
 
-    for (const auto& pair : result) {
-        int num = pair.second;
-
-        if (pair.second == 1) {
-            g1.push_back(pair.first);
-        }
-        else if (pair.second == 2) {
-            g2.push_back(pair.first);
-        }
-        else {
-            g3.push_back(pair.first);
-        }
-    }
-
-    printG(g1, 1);
-    printG(g2, 2);
-    printG(g3, 3);
+    
     
 }

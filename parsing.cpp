@@ -5,8 +5,12 @@
 #include <sstream>
 #include <iostream>
 #include "parsing.h"
-#include <unordered_set>
 #include <algorithm>
+#include "Storage.h"
+#include "prepareInput.h"
+#include "CustomMap.h"
+
+using namespace std;
 
 void parseMovies(const string& filename, unordered_map<int,Movie>& movieMap, unordered_map<string, Movie*>& movieNames) {
     ifstream file(filename);
@@ -67,66 +71,62 @@ void parseRatings(const string& filename, unordered_map<int,Movie>& movieMap) {
 
 //combines the two parsing functions
 void parseData(unordered_map<int,Movie>& movieMap, unordered_map<string, Movie*>& movieNames) {
-    string movies = "test/movietest.csv";
-    string ratings = "test/ratingtest.csv";
+    string movies = "files/movies.csv";
+    string ratings = "files/csvratings.csv";
     parseMovies(movies, movieMap, movieNames);
     parseRatings(ratings, movieMap);
 }
 
-vector<pair<Movie*, int>> approach1(string fmovie, string smovie, unordered_map<int,Movie>& movieMap, unordered_map<string, Movie*>& movieNames) {
-    vector<pair<Movie*, int>> result;
 
-    if (movieNames.find(fmovie) == movieNames.end()) {
-        cerr << " Movie: " << fmovie << " not found \n";
-        return {};
-    }
-    Movie& movie1 = *movieNames.at(fmovie);
-    Movie& movie2 = *movieNames.at(smovie);
+vector<Storage> approach1(const PreparedInput& input, std::unordered_map<int,Movie>& movieMap) {
+    //initialie vector with 6 empty storage slots to allow for indexing with []
+    vector<Storage> result(6);
+    CustomHashMap map(6, 0.75f);
 
-    vector<string> genres1 = movie1.getGenres();
-    int id1 = movie1.getId();
-    vector<string> genres2 = movie2.getGenres();
-    int id2 = movie2.getId();
-
-    //find common genres
-    vector<string> common;
-
-    for (auto genre : genres1) {
-        if (count(genres2.begin(),genres2.end(),genre) != 0) {
-            common.push_back(genre);
-        }
-    }
-
-
-
-    //looking at the common genres - delete 
-    for (auto ele : common) {
-        cout << ele << " | \n";
-    }
-
-
+    int id1 = input.getId1();
+    int id2 = input.getId2();
 
     for (auto& pair : movieMap) {
         int id = pair.first;
         Movie& movie = pair.second;
 
         //makes sure the base movies aren't being looked at
-        if (id == id1 || id == id2) {
+        if (id == id1 || id == id2 || movie.getRating() == 0) {
             continue;
         }
 
         vector<string> genres = movie.getGenres();
+        const vector<string>& common = input.getCommon();
+
         int count = 0;
         //count how many genres are in the similar section
-        for (auto gen : genres) {
-            if (std::count(common.begin(),common.end(), gen) != 0) {
-                count++;
+        for (auto genre : genres) {
+            for (auto selected : common) {
+                if (genre == selected) {
+                    count++;
+                    break; // stops double counting
+                }
             }
         }
+    
         if (count > 0) {
-            result.emplace_back(&movie, count);
+            std::string key = std::to_string(count);
+            if (!map.has(key)) {
+                map.insert(key, &result[count]);
+            }
+            Storage* store = map.get(key);
+            store->setCount(count);
+            store->addMovie(&movie);
         }
+    }
 
+   for (int i = 1; i <= 5; i++) {
+        std::string key = std::to_string(i);
+        if (map.has(key)) {
+            Storage* store = map.get(key);
+            store->sortMovies();
+            result[i] = *store;
+        }
     }
     return result;
 }
@@ -140,32 +140,14 @@ struct CompareCount {
     }
 };
 
-vector<pair<Movie*, int>> queueApproach(string fmovie, string smovie, unordered_map<int, Movie>& movieMap, unordered_map<string, Movie*>& movieNames) {
-    vector<pair<Movie*, int>> result;
 
-    if (movieNames.find(fmovie) == movieNames.end()) {
-        cerr << " Movie: " << fmovie << " not found\n";
-        return {};
-    }
-    Movie& movie1 = *movieNames.at(fmovie);
-    if (movieNames.find(smovie) == movieNames.end()) {
-        cerr << " Movie: " << smovie << " not found\n";
-        return {};
-    }
-    Movie& movie2 = *movieNames.at(smovie);
+//We have to re-implement this, we have to make a priority queue.
+// Queue Approach (preparedInput finds the strings and the ID's)
+vector<Storage> queueApproach(const PreparedInput input, unordered_map<int, Movie>& movieMap) {
+    int id1 = input.getId1();
+    int id2 = input.getId2();
+    const vector<string>& commonGenres = input.getCommon();
 
-    vector<string> genres1 = movie1.getGenres();
-    vector<string> genres2 = movie2.getGenres();
-    int id1 = movie1.getId();
-    int id2 = movie2.getId();
-
-    vector<string> commonGenres;
-
-    for (const auto& gen : genres1) {
-        if ( count(genres2.begin(),genres2.end(), gen) ) {
-            commonGenres.push_back(gen);
-        }
-    }
 
     priority_queue<pair<int, Movie*>,vector<pair<int, Movie*>>, CompareCount> pq;
 
@@ -189,12 +171,39 @@ vector<pair<Movie*, int>> queueApproach(string fmovie, string smovie, unordered_
         }
     }
 
+    vector<Storage> result;
+
     while (!pq.empty()) {
         auto topPair = pq.top();
         pq.pop();
         int count = topPair.first;
         Movie* movie = topPair.second;
-        result.emplace_back(movie, count);
+        
+        if (count > 0) {
+            result[count].addMovie(movie);
+        }
     }
     return result;
+}
+
+void printResults(const std::vector<Storage>& result) {
+    bool hasMovies = false;
+    for (size_t i = 1; i < result.size(); ++i) {
+        const std::vector<Movie*>& movies = result[i].getMovies();
+        if (!movies.empty()) {
+            std::cout << "Movies with " << i << " common genres:\n";
+            int count = 0;
+            for (const auto& movie : movies) {
+                if (count == 10) {
+                    break;
+                }
+                std::cout << "- ID: " << movie->getId() << ", Title: " << movie->getName() << ", Rating: " << movie->getRating() << "\n";
+                count++;
+            }
+            std::cout << std::endl;
+        }
+    }
+    if (!hasMovies) {
+        std::cout << "No movies in common." << std::endl;
+    }
 }
