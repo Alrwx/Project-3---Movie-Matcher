@@ -10,12 +10,12 @@ void Movie::addGenre(std::string genre) {
         }
 void Movie::addRating(double rate) {
     rating_sum += rate;
-    rating_count++;
-    rating = rating_sum / rating_count;            
+    rating_count++;       
 }
 
 double Movie::getRating() const {
-    return rating;
+    if (rating_count == 0) return 0.0;
+    return rating_sum / rating_count;
 }
 
 int Movie::getId() const {

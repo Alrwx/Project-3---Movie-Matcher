@@ -27,8 +27,8 @@ PreparedInput PreparedInput::prepare(const std::string& fmovie, const std::strin
     Movie* movie1 = it1->second;
     Movie* movie2 = it2->second;
   
-    vector<string> genres1 = movie1->getGenres(); 
-    vector<string> genres2 = movie2->getGenres();
+    std::vector<string> genres1 = movie1->getGenres(); 
+    std::vector<string> genres2 = movie2->getGenres();
 
     std::unordered_set<std::string> genres(genres1.begin(), genres1.end());
     std::vector<std::string> common;
