@@ -1,11 +1,12 @@
 #pragma once
 #include <string>
-#include <queue>
-#include <utility>
 #include <unordered_map>
 #include "movie.h"
-#include "Storage.h"
+#include "parsing.h"
+#include <queue>
+#include <utility>
 #include "prepareInput.h"
+#include "Storage.h"
 
 //.h file for cleaner code
 
@@ -18,12 +19,11 @@ void parseRatings(const std::string& filename, std::unordered_map<int, Movie>& m
 //combines the two parsing functions, making all the movies being stored within a map.
 void parseData(std::unordered_map<int,Movie>& movieMap, std::unordered_map<std::string, Movie*>& movieNames);
 
-//approach 1: using a map
+//approach 1: Custom DataType
 std::vector<Storage> approach1(const PreparedInput& input, std::unordered_map<int,Movie>& movieMap);
 
-//approach 2:
-std::vector<std::pair<Movie*, int>> queueApproach(std::string fmovie, std::string smovie, std::unordered_map<int, Movie>& movieMap, std::unordered_map<std::string, Movie*>& movieNames);
+//approach 2: Custom Priority Queue
+using namespace std;
+vector<Storage> queueApproach(const PreparedInput input, unordered_map<int, Movie>& movieMap);
 
 void printResults(const std::vector<Storage>& result);
-
-void printG(const std::vector<Movie*>& g, int c);

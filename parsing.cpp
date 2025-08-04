@@ -5,12 +5,16 @@
 #include <sstream>
 #include <iostream>
 #include "parsing.h"
+#include <algorithm>
+#include "Storage.h"
+#include "prepareInput.h"
 #include "CustomMap.h"
 #include <unordered_set>
 #include <algorithm>
 #include <queue>
 #include <vector>
 
+using namespace std;
 
 struct CompareCount {
     bool operator()(const std::pair<int, Movie*>& m1, const std::pair<int, Movie*>& m2) {
@@ -54,10 +58,9 @@ void parseMovies(const std::string& filename, std::unordered_map<int,Movie>& mov
     }
 }
 
-
-void parseRatings(const std::string& filename, std::unordered_map<int,Movie>& movieMap) {
-    std::ifstream file(filename);
-    std::string line;
+void parseRatings(const string& filename, unordered_map<int,Movie>& movieMap) {
+    ifstream file(filename);
+    string line;
 
     std::getline(file, line);
 
@@ -93,9 +96,9 @@ void parseRatings(const std::string& filename, std::unordered_map<int,Movie>& mo
 
 
 //combines the two parsing functions
-void parseData(std::unordered_map<int,Movie>& movieMap, std::unordered_map<std::string, Movie*>& movieNames) {
-    std::string movies = "files/movies.csv";
-    std::string ratings = "files/csvratings.csv";
+void parseData(unordered_map<int,Movie>& movieMap, unordered_map<string, Movie*>& movieNames) {
+    string movies = "files/movies.csv";
+    string ratings = "files/csvratings.csv";
     parseMovies(movies, movieMap, movieNames);
     parseRatings(ratings, movieMap);
 }
@@ -155,63 +158,74 @@ std::vector<Storage> approach1(const PreparedInput& input, std::unordered_map<in
     return result;
 }
 
-
-
-
-// Kevin
-std::vector<std::pair<Movie*, int>> queueApproach(std::string fmovie, std::string smovie, std::unordered_map<int, Movie>& movieMap, std::unordered_map<std::string, Movie*>& movieNames) {
-    std::vector<std::pair<Movie*, int>> result;
-
-    if (movieNames.find(fmovie) == movieNames.end()) {
-        std::cerr << " Movie: " << fmovie << " not found\n";
-        return {};
-    }
-    if (movieNames.find(smovie) == movieNames.end()) {
-        std::cerr << " Movie: " << smovie << " not found\n";
-        return {};
+struct CompareCount {
+    bool operator()(const pair<int, Movie*>& m1, const pair<int, Movie*>& m2) {
+        if (m1.first != m2.first) {
+            return m1.first < m2.first;
+        }
+        return m1.second->getRating() < m2.second->getRating();
     }
 
     Movie& movie1 = *movieNames.at(fmovie);
     Movie& movie2 = *movieNames.at(smovie);
 
-    std::vector<std::string> genres1 = movie1.getGenres();
-    std::vector<std::string> genres2 = movie2.getGenres();
-    int id1 = movie1.getId();
-    int id2 = movie2.getId();
+//We have to re-implement this, we have to make a priority queue.
+// Queue Approach (preparedInput finds the strings and the ID's)
+vector<Storage> queueApproach(const PreparedInput input, unordered_map<int, Movie>& movieMap) {
+    int id1 = input.getId1();
+    int id2 = input.getId2();
+    const vector<string>& commonGenres = input.getCommon();
 
-    std::vector<std::string> commonGenres;
-    for (const auto& gen : genres1) {
-        if (std::count(genres2.begin(), genres2.end(), gen)) {
-            commonGenres.push_back(gen);
-        }
-    }
-
-    std::priority_queue<std::pair<int, Movie*>, std::vector<std::pair<int, Movie*>>, CompareCount> pq;
+    const int MAX_COUNT = 5;
+    vector<Storage> result(6);
+    MoviePQ pq;
+    //priority_queue<pair<int, Movie*>,vector<pair<int, Movie*>>, CompareCount> pq;
 
     for (auto& pair : movieMap) {
         int id = pair.first;
         Movie& movie = pair.second;
 
-        if (id == id1 || id == id2) continue;
+        if (id == id1 || id == id2 || movie.getRating() == 0) {continue;}
 
-        std::vector<std::string> genres = movie.getGenres();
+        vector<string> genres = movie.getGenres();
+
         int matchCount = 0;
+
         for (const auto& gen : genres) {
-            if (std::count(commonGenres.begin(), commonGenres.end(), gen)) {
+            if (count(commonGenres.begin(),commonGenres.end(), gen)) {
                 matchCount++;
             }
         }
-
-        if (matchCount > 0) {
-            pq.emplace(matchCount, &movie);
+        if (matchCount > 0 ) {
+            //int ratingInt = static_cast<int>(movie.getRating() * 100);
+            pq.push({&movie, matchCount} );
         }
     }
 
     while (!pq.empty()) {
+
         auto topPair = pq.top();
         pq.pop();
-        result.emplace_back(topPair.second, topPair.first); // Movie*, count
-    }
 
+        Movie* movie = topPair.first;
+        int count = topPair.second;
+
+
+        if (count <= MAX_COUNT) {
+            result[count].addMovie(movie);
+            result[count].setCount(count);
+        }
+
+        //Movie* movie = topPair.second;
+        /*
+        if (count > 0) {
+            result[count].addMovie(movie);
+        }
+    }
+    */
+    }
+    for (int i = 1; i <= MAX_COUNT; i++) {
+        result[i].pqSortMovies();
+    }
     return result;
 }

@@ -1,5 +1,7 @@
 #include "Storage.h"
 #include <algorithm>
+#include <ios>
+#include <bits/ios_base.h>
 
 Storage::Storage() : count(0) {}
 
@@ -36,4 +38,47 @@ void Storage::sortMovies() {
         }
         movies[j + 1] = key;
     }
+}
+
+void Storage::mergeMovies(vector<Movie*>& movies, int left, int mid, int right) {
+    int m1 = mid - left + 1;
+    int m2 = right - mid;
+
+    vector<Movie*> L(m1), R(m2);
+
+    for (int i = 0; i < m1; ++i) {
+        L[i] = movies[left+i];
+    }
+    for (int i = 0; i < m2; ++i) {
+        R[i] = movies[mid+1+i];
+    }
+
+    int i = 0, j = 0, k = left;
+    while (i < m1 && j < m2) {
+        if (L[i]->getRating() >= R[j]->getRating()) {
+            movies[k++] = L[i++];
+        }else {
+            movies[k++] = R[j++];
+        }
+    }
+    while (i < m1) {
+        movies[k++] = L[i++];
+    }
+    while (j < m2) {
+        movies[k++] = R[j++];
+    }
+}
+
+void Storage::mergeSortMovies(vector<Movie*>& movies, int left, int right) {
+    if (left < right) {
+        int mid = left + (right - left) / 2;
+        mergeSortMovies(movies, left, mid);
+        mergeSortMovies(movies, mid + 1, right);
+        mergeMovies(movies, left, mid, right);
+    }
+}
+
+void Storage::pqSortMovies() {
+    if (movies.size() <= 1) {return;};
+    mergeSortMovies(movies, 0, movies.size() - 1);
 }

@@ -13,6 +13,9 @@ add_executable(Project_3___Movie_Matcher
     parsing.h
     testingFunction.cpp
     testingFunction.h
+    CustomMap.cpp
+    prepareInput.cpp
+    Storage.cpp
     )
 file(COPY ${CMAKE_SOURCE_DIR}/files DESTINATION ${CMAKE_BINARY_DIR})
 file(COPY ${CMAKE_SOURCE_DIR}/test DESTINATION ${CMAKE_BINARY_DIR})
